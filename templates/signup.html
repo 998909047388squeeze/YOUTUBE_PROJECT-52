@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form p {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        button {
+            background: #6B73FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #000DFF;
+        }
+        .help-text {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        form:hover .help-text {
+            display: block;
+            opacity: 1;
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+            border-color: #6B73FF;
+            outline: none;
+            box-shadow: 0 0 5px rgba(107, 115, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+<form method="POST">
+    <h2>Signup</h2>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send!</button>
+    <p class="help-text">Your password must be at least 8 characters long, cannot be a commonly used password, and cannot be entirely numeric.</p>
+</form>
+</body>
+</html>

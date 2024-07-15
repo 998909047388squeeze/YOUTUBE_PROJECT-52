@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ video.video_title }}</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #FF0000;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        header a:hover {
+            text-decoration: underline;
+        }
+        .video-detail {
+            max-width: 800px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        video {
+            width: 100%;
+            border-radius: 10px;
+        }
+        h2, h3 {
+            color: white;
+            margin-top: 20px;
+        }
+        p {
+            color: white;
+        }
+        .comments {
+            margin-top: 20px;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .comment {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            background: #6B73FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #000DFF;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'home' %}">YouTube</a></h1>
+    </header>
+    <div class="video-detail">
+        <video controls>
+            <source src="{{ video.video_content.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <h2>{{ video.video_title }}</h2>
+        <p>Uploaded by {{ video.user.username }} on {{ video.created_at }}</p>
+        <p>Likes: <span id="like-count">{{ video.like }}</span>
+            <button onclick="likeVideo({{ video.id }})">👍</button>
+            Dislikes: <span id="dislike-count">{{ video.dislike }}</span>
+            <button onclick="dislikeVideo({{ video.id }})">👎</button>
+        </p>
+        <h3>Comments</h3>
+        <div class="comments">
+            {% for comment in video.comments.all %}
+            <div class="comment">
+                <div class="comment-header">
+                    <p><strong>{{ comment.comment_user }}:</strong></p>
+                    <p><em>{{ comment.created_at }}</em></p>
+                </div>
+                <p>{{ comment.comment_text }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <h3>Add a Comment</h3>
+        <form method="post">
+            {% csrf_token %}
+            <textarea name="comment_text" rows="4" required></textarea><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script src="{% static 'script.js' %}"></script>
+    <script>
+        function likeVideo(videoId) {
+            fetch(`/video/${videoId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('like-count').innerText = data.like;
+            });
+        }
+
+        function dislikeVideo(videoId) {
+            fetch(`/video/${videoId}/dislike/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('dislike-count').innerText = data.dislike;
+            });
+        }
+    </script>
+</body>
+</html>
